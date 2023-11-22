@@ -2,7 +2,7 @@
 
 <!-- Define the variables in "$(var.*) expressions" -->
 <?define Name = "MPTCP Enabler" ?>
-<?define Manufacturer = "UCLouvain" ?>
+<?define Manufacturer = "MPTCP" ?>
 <?define Version = "1.0.0.0" ?>
 <?define UpgradeCode = "9ED3FF33-8718-444E-B44B-69A2344B7E98" ?>
 
@@ -40,7 +40,7 @@
 				<!-- Copies the App.WindowsService.exe file using the
                      project reference preprocessor variables -->
 				<File Id="mptcp_enabler"
-                      Source="$(var.mptcp_enabler.TargetDir)publish\mptcp_enabler.exe"
+                      Source="$(var.mptcp_enabler.TargetDir)\win-x64\publish\mptcp_enabler.exe"
                       KeyPath="true" />
 
 				<!-- Remove all files from the INSTALLFOLDER on uninstall -->
@@ -49,9 +49,9 @@
 				<!-- Tell WiX to install the Service -->
 				<ServiceInstall Id="ServiceInstaller"
                                 Type="ownProcess"
-                                Name="App.WindowsService"
+                                Name="MPTCPEnabler"
                                 DisplayName="$(Name)"
-                                Description="A joke service that periodically logs nerdy humor."
+                                Description="Enable MPTCP Inside WSL2"
                                 Start="auto"
                                 ErrorControl="normal" />
 
@@ -60,7 +60,7 @@
                                 Start="install"
                                 Stop="both"
                                 Remove="uninstall"
-                                Name="App.WindowsService"
+                                Name="MPTCPEnabler"
                                 Wait="true" />
 			</Component>
 		</DirectoryRef>

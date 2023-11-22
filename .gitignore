@@ -2,3 +2,17 @@
 /.idea/.idea.MTCP-WSL2/.idea/encodings.xml
 /.idea/.idea.MTCP-WSL2/.idea/indexLayout.xml
 /.idea/.idea.MTCP-WSL2/.idea/vcs.xml
+
+mptcp-enabler/bin/
+
+mptcp-enabler/obj/
+
+MTCP-WSL2/bin/
+
+MTCP-WSL2/obj/
+
+mptcp-installer/obj/
+
+WSLAttachSwitch/bin/
+
+WSLAttachSwitch/obj/
