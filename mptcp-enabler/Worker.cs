@@ -1,3 +1,5 @@
+using System.Management;
+using System.Security.Principal;
 using MTCP_WSL2;
 
 namespace mptcp_enabler;
@@ -13,7 +15,6 @@ public class Worker : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        
         NetworkConfig config = NetworkConfig.LoadConfigFromFile();
         WslConfigManager wslConfigManager = new WslConfigManager(config);
         var mtcpEnabler = new MPTCPEnabler(_logger,stoppingToken,RefreshDelay,config);

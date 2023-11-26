@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using Microsoft.Extensions.Logging;
 
 namespace MTCP_WSL2;
 
@@ -8,21 +9,22 @@ public class WslConfigManager
 
     public WslConfigManager(NetworkConfig config)
     {
-        _config = config;
-        if (!config.ManageKernelLocation) return;
-        string kernelPath = FileManager.GetKernelPath().Replace(@"\", @"\\");
-        if (File.Exists(FileManager.GetWSLConfigPath()))
-        {
-            if (!IsKernelPathCorrect(kernelPath))
+            _config = config;
+            if (!config.ManageKernelLocation) return;
+            string kernelPath = FileManager.GetKernelPath().Replace(@"\", @"\\");
+            if (File.Exists(FileManager.GetWSLConfigPath()))
             {
-                UpdateKernelPath(kernelPath);
+                if (!IsKernelPathCorrect(kernelPath))
+                {
+                    UpdateKernelPath(kernelPath);
+                }
             }
-        }
-        else
-        {
-            File.WriteAllLines(FileManager.GetWSLConfigPath(),new []{"[wsl2]","kernel="+kernelPath});
-        }
+            else
+            {
+                File.WriteAllLines(FileManager.GetWSLConfigPath(),new []{"[wsl2]","kernel="+kernelPath});
+            }
     }
+    
     
     public static bool IsKernelPathCorrect(string expectedKernelPath)
     {

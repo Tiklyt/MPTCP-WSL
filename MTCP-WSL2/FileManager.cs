@@ -1,4 +1,6 @@
-﻿namespace MTCP_WSL2;
+﻿using System.Management;
+
+namespace MTCP_WSL2;
 
 public class FileManager
 {
@@ -40,8 +42,17 @@ public class FileManager
 
     public static string GetWSLConfigPath()
     {
-        string localPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-        return localPath + Path.DirectorySeparatorChar + WslConfigName;
+        ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT UserName FROM Win32_ComputerSystem");
+        ManagementObjectCollection collection = searcher.Get();
+        string username = (string)collection.Cast<ManagementBaseObject>().First()["UserName"];
+        username = username.Split("\\")[1];
+        string path = Path.GetPathRoot(Environment.SystemDirectory) 
+                      +"Users"
+                      + Path.DirectorySeparatorChar
+                      + username 
+                      + Path.DirectorySeparatorChar
+                      + WslConfigName;
+        return path;
     }
     
 }
