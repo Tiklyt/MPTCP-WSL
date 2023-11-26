@@ -9,8 +9,7 @@ namespace MTCP_WSL2;
 /// </summary>
 public class NetworkMonitor
 {
-
-    private readonly HashSet<string> _interfacesNames = new();
+    private readonly List<NetworkInformation> _interfacesNames = new();
     private readonly CancellationToken _token;
     private readonly ILogger _logger;
 
@@ -53,18 +52,30 @@ public class NetworkMonitor
     private void UpdateNetworkInterfaces()
     {
         var updatedInterfacesName = GetAllNetworkInterfaces();
-        foreach (var interfaceName in updatedInterfacesName.Where(interfaceName =>
-                     !_interfacesNames.Contains(interfaceName)))
+        foreach (var netInfo in updatedInterfacesName)
         {
-            _interfacesNames.Add(interfaceName);
-            OnUpdate?.Invoke(this, new CollectionUpdateEvent(EventType.Add, interfaceName));
+            if (!_interfacesNames.Contains(netInfo))
+            {
+                _interfacesNames.Add(netInfo);
+                OnUpdate?.Invoke(this, new CollectionUpdateEvent()
+                {
+                    NetworkInfo = netInfo,
+                    Type = EventType.Addition
+                });
+            }
         }
-
-        foreach (var interfaceName in _interfacesNames.Where(interfaceName =>
-                     !updatedInterfacesName.Contains(interfaceName)))
+        
+        foreach (var netInfo in _interfacesNames)
         {
-            _interfacesNames.Remove(interfaceName);
-            OnUpdate?.Invoke(this, new CollectionUpdateEvent(EventType.Del, interfaceName));
+            if (!_interfacesNames.Contains(netInfo))
+            {
+                updatedInterfacesName.Remove(netInfo);
+                OnUpdate?.Invoke(this, new CollectionUpdateEvent()
+                {
+                    NetworkInfo = netInfo,
+                    Type = EventType.Deletion
+                });
+            }
         }
     }
 
@@ -73,9 +84,9 @@ public class NetworkMonitor
     /// </summary>
     ///
     /// <returns>list containing the names of all physical NIC's</returns>
-    private List<string> GetAllNetworkInterfaces()
+    private List<NetworkInformation> GetAllNetworkInterfaces()
     {
-        var interfaces = new List<string>();
+        var interfaces = new List<NetworkInformation>();
         try
         {
             var query = new ObjectQuery("SELECT * FROM Win32_NetworkAdapter " +
@@ -83,7 +94,17 @@ public class NetworkMonitor
                                         "OR PNPDeviceID LIKE 'USB%' or PNPDeviceID LIKE 'PCMCIA%') " +
                                         "AND NetConnectionID IS NOT NULL");
             var searcher = new ManagementObjectSearcher(query);
-            foreach (ManagementObject adapter in searcher.Get()) interfaces.Add(adapter["Name"].ToString());
+            foreach (ManagementObject adapter in searcher.Get())
+            {
+                var netInfo = new NetworkInformation()
+                {
+                    MacAddress = MacAddressUtil.formatMacAddress(adapter["MacAddress"].ToString()),
+                    FriendlyInterfaceName = adapter["NetConnectionID"].ToString(),
+                    InterfaceName = adapter["Name"].ToString(),
+                    Types = new List<string>() { }
+                };  
+                interfaces.Add(netInfo);
+            }
         }
         catch (Exception e)
         {
@@ -91,4 +112,6 @@ public class NetworkMonitor
         }
         return interfaces;
     }
+
+    
 }

@@ -14,7 +14,7 @@ namespace MTCP_WSL2;
 public class WslAttacher
 {
     private static readonly SafeBool IsWslRunning = new();
-    private static readonly ConcurrentBag<string> Interfaces = new();
+    private static readonly ConcurrentBag<NetworkInformation> Interfaces = new();
     private readonly CancellationToken _token;
     private readonly ILogger _logger;
 
@@ -36,8 +36,12 @@ public class WslAttacher
     /// </summary>
     public void AddEvent(object? o, CollectionUpdateEvent e)
     {
-        if (!Interfaces.Contains(e.InterfaceName)) Interfaces.Add(e.InterfaceName);
-        if (IsWslProcessRunning()) WSLAttachTool.Attach(e.InterfaceName);
+        if (!Interfaces.Contains(e.NetworkInfo)) Interfaces.Add(e.NetworkInfo);
+        if (IsWslProcessRunning())
+        {
+            string transMacAddress = MacAddressUtil.Transform(e.NetworkInfo.MacAddress);
+            WSLAttachTool.Attach(e.NetworkInfo.FriendlyInterfaceName,transMacAddress);
+        }
     }
 
     /**
@@ -74,8 +78,8 @@ public class WslAttacher
                 await Task.Delay(1000);
                 foreach (var iface in Interfaces)
                 {
-                    
-                    if (!WSLAttachTool.Attach(iface))
+                    string transMacAddress = MacAddressUtil.Transform(iface.MacAddress);
+                    if (!WSLAttachTool.Attach(iface.FriendlyInterfaceName,transMacAddress))
                     {
                         _logger.LogInformation($"Interface {iface} could not be attached.");
                     }

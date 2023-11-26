@@ -13,7 +13,10 @@ public class Worker : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        var mtcpEnabler = new MPTCPEnabler(_logger,stoppingToken,RefreshDelay);
+        
+        NetworkConfig config = NetworkConfig.LoadConfigFromFile();
+        WslConfigManager wslConfigManager = new WslConfigManager(config);
+        var mtcpEnabler = new MPTCPEnabler(_logger,stoppingToken,RefreshDelay,config);
         while (!stoppingToken.IsCancellationRequested)
         {
             await Task.Delay(RefreshDelay, stoppingToken);

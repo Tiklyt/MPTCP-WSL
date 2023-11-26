@@ -10,6 +10,7 @@ namespace MTCP_WSL2;
 /// </summary>
 public class HyperVManager
 {
+    public string vSwitchPrefix = "MPTCP - ";
     private static readonly SemaphoreSlim Mutex = new(1);
     public EventHandler<CollectionUpdateEvent> OnAdd = null!;
     private readonly ILogger _logger;
@@ -57,7 +58,7 @@ public class HyperVManager
     /// other naming convention will lead to complete disregard by the application and might not function as expected
     /// </remarks>
     /// <param name="interfaceName">The name of the network interface for which the switch should be created</param>
-    public async Task CreateHyperVSwitch(string interfaceName)
+    public async Task CreateHyperVSwitch(NetworkInformation netInfo)
     {
         await Mutex.WaitAsync(); //since Hyper-V don't allow creation of switch simultaneously, a mutex is put here
                                  //and is released when the Task is finished
@@ -65,15 +66,20 @@ public class HyperVManager
         {
             await Task.Run(() =>
             {
-                var interfaceConnectionId = GetWindowsInterfaceName(interfaceName);
-                var id = "MPTCP - " + interfaceConnectionId;
+                var interfaceConnectionId = netInfo.FriendlyInterfaceName;
+                var id = vSwitchPrefix + interfaceConnectionId;
                 if (!IsNetworkInterfaceSwitched(interfaceConnectionId))
                 {
                     var command =
                         $"New-VMSwitch -Name '{id}' -NetAdapterName '{interfaceConnectionId}' -AllowManagementOS $true";
                     if (RunPowerShell(command).StatusCode == 0)
                     {
-                        OnAdd.Invoke(this, new CollectionUpdateEvent(EventType.Add, id));
+                        netInfo.FriendlyInterfaceName = vSwitchPrefix + netInfo.FriendlyInterfaceName;
+                        OnAdd.Invoke(this, new CollectionUpdateEvent()
+                        {
+                            Type = EventType.Addition,
+                            NetworkInfo = netInfo
+                        });
                         _logger.LogInformation($"vSwitch : {id} created successfully");
                     }
                     else
@@ -84,7 +90,12 @@ public class HyperVManager
                 else
                 {
                     _logger.LogInformation($"vSwitch : {id} already existing");
-                    OnAdd.Invoke(this, new CollectionUpdateEvent(EventType.Add, id));
+                    netInfo.FriendlyInterfaceName = vSwitchPrefix + netInfo.FriendlyInterfaceName;
+                    OnAdd.Invoke(this, new CollectionUpdateEvent()
+                    {
+                        Type = EventType.Addition,
+                        NetworkInfo = netInfo
+                    });
                 }
             });
         }

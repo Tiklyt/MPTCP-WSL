@@ -2,6 +2,6 @@
 
 public enum EventType
 {
-    Add,
-    Del
+    Addition,
+    Deletion
 }

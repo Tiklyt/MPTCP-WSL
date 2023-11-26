@@ -1,7 +1,7 @@
 ﻿namespace MTCP_WSL2;
 
 /// <summary>
-///  Boolean type that is thread safe
+///     Boolean type that is thread safe
 /// </summary>
 public class SafeBool
 {

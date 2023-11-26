@@ -5,15 +5,17 @@
         <TargetFramework>net7.0</TargetFramework>
         <RootNamespace>MTCP_WSL2</RootNamespace>
         <ImplicitUsings>enable</ImplicitUsings>
+        <SelfContained>false</SelfContained>
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="ILMerge" Version="3.0.41"/>
-        <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="7.0.1" />
-        <PackageReference Include="Serilog" Version="3.0.1" />
-        <PackageReference Include="Serilog.Extensions.Hosting" Version="7.0.0" />
-        <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="7.0.1"/>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+        <PackageReference Include="Serilog" Version="3.0.1"/>
+        <PackageReference Include="Serilog.Extensions.Hosting" Version="7.0.0"/>
+        <PackageReference Include="Serilog.Sinks.File" Version="5.0.0"/>
         <PackageReference Include="System.Management" Version="8.0.0-rc.1.23419.4"/>
     </ItemGroup>
 

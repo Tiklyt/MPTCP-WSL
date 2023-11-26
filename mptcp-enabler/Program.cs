@@ -1,3 +1,4 @@
+using MTCP_WSL2;
 using Serilog;
 using Serilog.Events;
 
@@ -11,13 +12,14 @@ public class Program
             .MinimumLevel.Debug()
             .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
             .Enrich.FromLogContext().WriteTo
-            .File(@"C:\tmp\mptcp\log.txt")
+            .File(FileManager.GetLogPath())
             .CreateLogger();
 
         try
         {
             Host.CreateDefaultBuilder(args).UseWindowsService()
-                .ConfigureServices(services => { services.AddHostedService<Worker>(); }).UseSerilog()
+                .ConfigureServices(services => { services.AddHostedService<Worker>(); })
+                .UseSerilog()
                 .Build().Run();
         }
         catch (Exception ex)
