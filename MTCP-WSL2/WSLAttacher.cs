@@ -81,11 +81,11 @@ public class WslAttacher
                     string transMacAddress = MacAddressUtil.Transform(iface.MacAddress);
                     if (!WSLAttachTool.Attach(iface.FriendlyInterfaceName,transMacAddress))
                     {
-                        _logger.LogInformation($"Interface {iface} could not be attached.");
+                        _logger.LogInformation($"Interface {iface.InterfaceName} could not be attached.");
                     }
                     else
                     {
-                        _logger.LogInformation($"Interface {iface} attached successfully.");
+                        _logger.LogInformation($"Interface {iface.InterfaceName} attached successfully.");
                     }
                 }
                 IsWslRunning.Value = true;
