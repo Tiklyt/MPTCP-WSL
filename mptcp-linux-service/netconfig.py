@@ -25,8 +25,8 @@ def apply_general_config(config):
     disable_eth0()
     disable_mptcp_service()
     change_dns(config["DnsServer"])
-    change_subflow_limit(config)
-    change_addr_accepted(config)
+    # change_subflow_limit(config)
+    # change_addr_accepted(config)
     prioritize_ipv4()
 
 
@@ -117,15 +117,14 @@ def get_interface_ip(iface):
 
 
 def get_subnet(iface, mask):
-    gatewayCommand = "route -n | grep 'x' | awk '{print $1}'".replace("x", iface)
-    ifaceGW = subprocess.run(gatewayCommand, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                             text=True).stdout.replace("\n", "")
-    octets = ifaceGW.split('.')
-    octets[-1] = '1'
-    return [str(ifaceGW + "/" + mask), ".".join(octets)]
+    gw = get_default_prefix(iface)
+    arr = list(gw)
+    arr[-1] = "1"
+    return gw + "/" + mask, ''.join(arr)
 
 
 def assign_ip(iface):
+    print(iface)
     subprocess.run(["dhclient", "-4", iface], shell=False)
 
 
@@ -198,12 +197,24 @@ def main():
     monitor = pyudev.Monitor.from_netlink(context)
     monitor.filter_by(subsystem='net')
     config = read_config()
+    print(config)
     if config is None or not config["ManageNetworkConfiguration"]:
-        return
+        print("None")
     apply_general_config(config)
     for device in iter(monitor.poll, None):
         if device.action == 'add':
             handle_new_network_interface(device.sys_name, config)
+
+def get_default_prefix(interface):
+    routes = []
+    with open('/proc/net/route') as f:
+        for line in f:
+            fields = line.strip().split()
+            if fields[0] == interface and fields[1] != '00000000':
+                destination_hex = fields[1]
+                destination_ip = '.'.join(reversed([str(int(destination_hex[i:i+2], 16)) for i in range(0, 8, 2)]))
+                routes.append(destination_ip)
+    return routes[0]
 
 
 if __name__ == "__main__":
