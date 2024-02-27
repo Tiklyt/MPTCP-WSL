@@ -1,2 +1,0 @@
-﻿pyudev==0.24.1
-netifaces==0.11.0
