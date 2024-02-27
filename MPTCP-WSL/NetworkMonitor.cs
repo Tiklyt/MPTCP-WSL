@@ -1,7 +1,7 @@
 ﻿using System.Management;
 using Microsoft.Extensions.Logging;
 
-namespace MTCP_WSL2;
+namespace MPTCP_WSL;
 
 /// <summary>
 /// Monitor Physical Network Interfaces, basically it throw an event When there is deletion or an

@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Management;
 using System.Security.Principal;
-using MTCP_WSL2;
+using MPTCP_WSL;
 
 namespace mptcp_enabler;
 

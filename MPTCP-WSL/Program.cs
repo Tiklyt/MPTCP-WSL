@@ -1,4 +1,4 @@
-﻿namespace MTCP_WSL2;
+﻿namespace MPTCP_WSL;
 
 internal class Program
 {

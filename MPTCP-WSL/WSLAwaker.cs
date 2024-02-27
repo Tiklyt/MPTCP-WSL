@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace MTCP_WSL2;
+namespace MPTCP_WSL;
 
 public class WSLAwaker
 {

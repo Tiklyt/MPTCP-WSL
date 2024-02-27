@@ -1,4 +1,4 @@
-﻿namespace MTCP_WSL2;
+﻿namespace MPTCP_WSL;
 
 /// <summary>
 ///     Event that should be raised when an NIC is added or removed

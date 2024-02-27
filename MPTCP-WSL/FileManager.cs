@@ -1,6 +1,6 @@
 ﻿using System.Management;
 
-namespace MTCP_WSL2;
+namespace MPTCP_WSL;
 
 public class FileManager
 {
@@ -10,7 +10,7 @@ public class FileManager
     private const string LogFileName = "log.txt";
     private const string WslConfigName = ".wslconfig";
     private const string KernelName = "bzImage";
-    private const string sp = Path.DirectorySeparatorChar;
+    private const string sp = "/";
 
     public static string GetConfigPath()
     {
@@ -41,7 +41,7 @@ public class FileManager
         username = username.Split("\\")[1];
         var path = Path.GetPathRoot(Environment.SystemDirectory)
                    + "Users"
-                   \+ sp
+                   + sp
                    + username
                    + sp
                    + "AppData"

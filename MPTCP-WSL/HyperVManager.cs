@@ -2,8 +2,8 @@
 using System.Management;
 using Microsoft.Extensions.Logging;
 
-namespace MTCP_WSL2;
 
+namespace MPTCP_WSL;
 
 /// <summary>
 /// Allow to create external Hyper-V switch

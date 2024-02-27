@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Serilog;
 
-namespace MTCP_WSL2;
+namespace MPTCP_WSL;
 
 public class WslConfigManager
 {

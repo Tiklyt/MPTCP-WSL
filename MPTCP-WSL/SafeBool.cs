@@ -1,4 +1,4 @@
-﻿namespace MTCP_WSL2;
+﻿namespace MPTCP_WSL;
 
 /// <summary>
 ///     Boolean type that is thread safe

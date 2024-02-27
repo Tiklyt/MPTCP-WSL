@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 using WSLAttachSwitch;
 using Timer = System.Timers.Timer;
 
-namespace MTCP_WSL2;
+namespace MPTCP_WSL;
 
 /// <summary>
 ///     Monitor WSL and allow to attach every Physical NIC into WSL

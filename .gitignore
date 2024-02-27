@@ -18,3 +18,11 @@ WSLAttachSwitch/bin/
 WSLAttachSwitch/obj/
 
 global.json
+
+MPTCP-WSL2/
+
+.idea/
+
+MPTCP-WSL/bin/
+
+MPTCP-WSL/obj/
