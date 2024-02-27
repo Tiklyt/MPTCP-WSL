@@ -32,7 +32,7 @@ public class WSLAttachTool
     public static bool Attach(string networkName, string macAddress = null, int? vlanIsolationId = null)
     {
         try
-        {
+        {       
             var systems = ComputeSystem.Enumerate(new JsonObject { ["Owners"] = new JsonArray("WSL") });
             if (systems.Length != 1)
             {

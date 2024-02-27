@@ -9,12 +9,12 @@ public class NetworkConfig
     
    
     public List<NetworkInformation> Config { get; set; } = new();
-
+    public Proxy Proxy { get; set; } = new();
     public bool ManageKernelLocation = true;
-    public bool ManageNetworkConfiguration = true;
+    public bool ManageEndpoint = true;
+    public bool KeepWSL2Awake = true;
     public int SubflowNr { get; set; } = 2;
     public int AddAddrAcceptedNr { get; set; } = 4;
-    public string DnsServer = "8.8.8.8";
     public NetworkConfig()
     {
         Config = new List<NetworkInformation>();
@@ -62,14 +62,22 @@ public class NetworkConfig
 public class NetworkInformation : IEquatable<NetworkInformation>
 {
     public string InterfaceName { get; set; }
-    
     public string FriendlyInterfaceName { get; set; }
-    public string MacAddress { get; set; }
+    public string WindowsMacAddress { get; set; }
+    public string LinuxMacAddress { get; set; }
     public List<string> Types { get; set; } = new ();
 
     public bool Equals(NetworkInformation? other)
     {
-        return InterfaceName.Equals(other?.InterfaceName);
+        return WindowsMacAddress.Equals(other?.WindowsMacAddress);
     }
+}
+
+public class Proxy
+{
+    private string proxyAddress;
+    private string proxyPort;
+    private string user;
+    private string password;
 }
 

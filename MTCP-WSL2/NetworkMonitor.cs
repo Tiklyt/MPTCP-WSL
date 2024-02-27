@@ -98,7 +98,8 @@ public class NetworkMonitor
             {
                 var netInfo = new NetworkInformation()
                 {
-                    MacAddress = MacAddressUtil.formatMacAddress(adapter["MacAddress"].ToString()),
+                    WindowsMacAddress = MacAddressUtil.formatMacAddress(adapter["MacAddress"].ToString()),
+                    LinuxMacAddress = MacAddressUtil.Transform(MacAddressUtil.formatMacAddress(adapter["MacAddress"].ToString())),
                     FriendlyInterfaceName = adapter["NetConnectionID"].ToString(),
                     InterfaceName = adapter["Name"].ToString(),
                     Types = new List<string>() { }
@@ -112,6 +113,4 @@ public class NetworkMonitor
         }
         return interfaces;
     }
-
-    
 }

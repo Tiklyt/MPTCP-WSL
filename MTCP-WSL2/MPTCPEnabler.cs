@@ -1,5 +1,4 @@
-﻿using System.Security.AccessControl;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 
 namespace MTCP_WSL2;
 
@@ -23,7 +22,8 @@ public class MPTCPEnabler
         _config = config;
         _hyperVManager = new HyperVManager(logger);
         _networkMonitor = new NetworkMonitor(logger,token,refreshDelay);
-        _wslAttacher = new WslAttacher(logger,token);
+        _wslAttacher = new WslAttacher(logger,_config,token);
+        WSLAwaker wslAwaker = new WSLAwaker(config);
         _networkMonitor.OnUpdate += _config.NetworkMonitorOnOnUpdate;
         _networkMonitor.OnUpdate += async (sender, collectionUpdateEvent) =>
         {

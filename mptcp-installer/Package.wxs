@@ -38,8 +38,8 @@
 
 				<!-- Copies the App.WindowsService.exe file using the
                      project reference preprocessor variables -->
-				<File Id="mptcp_enabler"
-					  Source="$(var.mptcp_enabler.TargetDir)\win-x64\publish\mptcp_enabler.exe"
+				<File Id="mptcp_enabler.exe"
+					  Source="$(var.mptcp_enabler.TargetDir)win-x64\publish\mptcp_enabler.exe"
 					  KeyPath="true" />
 
 				<!-- Include the bzImage file in the installation -->

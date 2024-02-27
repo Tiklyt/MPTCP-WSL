@@ -1,4 +1,7 @@
 ﻿<Project Sdk="WixToolset.Sdk/4.0.2">
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+  </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\mptcp-enabler\mptcp-enabler.csproj" />
     <ProjectReference Include="..\MTCP-WSL2\MTCP-WSL2.csproj" />

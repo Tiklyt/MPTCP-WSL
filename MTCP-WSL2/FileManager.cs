@@ -10,49 +10,79 @@ public class FileManager
     private const string LogFileName = "log.txt";
     private const string WslConfigName = ".wslconfig";
     private const string KernelName = "bzImage";
+    private const string sp = Path.DirectorySeparatorChar;
 
     public static string GetConfigPath()
     {
-        string localPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-        return localPath + Path.DirectorySeparatorChar + AppName + Path.DirectorySeparatorChar + ConfigFileName;
+        var searcher = new ManagementObjectSearcher("SELECT UserName FROM Win32_ComputerSystem");
+        var collection = searcher.Get();
+        var username = (string)collection.Cast<ManagementBaseObject>().First()["UserName"];
+        username = username.Split("\\")[1];
+        var path = Path.GetPathRoot(Environment.SystemDirectory)
+                   + "Users"
+                   + sp
+                   + username
+                   + sp
+                   + "AppData"
+                   + sp
+                   + "Local"
+                   + sp
+                   + AppName
+                   + sp
+                   + ConfigFileName;
+        return path;
     }
 
     public static string GetLogPath()
     {
-        string localPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-        return localPath + Path.DirectorySeparatorChar + AppName + Path.DirectorySeparatorChar + LogFileName;
+        var searcher = new ManagementObjectSearcher("SELECT UserName FROM Win32_ComputerSystem");
+        var collection = searcher.Get();
+        var username = (string)collection.Cast<ManagementBaseObject>().First()["UserName"];
+        username = username.Split("\\")[1];
+        var path = Path.GetPathRoot(Environment.SystemDirectory)
+                   + "Users"
+                   \+ sp
+                   + username
+                   + sp
+                   + "AppData"
+                   + sp
+                   + "Local"
+                   + sp
+                   + AppName
+                   + sp
+                   + LogFileName;
+        return path;
     }
-    
+
     public static string GetKernelPath()
     {
-        string localPath = GetApplicationFolderPath();
-        return localPath 
-               + AppName 
-               + Path.DirectorySeparatorChar 
-               + AppContext 
-               + Path.DirectorySeparatorChar 
+        var localPath = GetApplicationFolderPath();
+        return localPath
+               + AppName
+               + sp
+               + AppContext
+               + sp
                + KernelName;
     }
 
 
     public static string GetApplicationFolderPath()
     {
-        return Environment.GetEnvironmentVariable("ProgramFiles(x86)") + Path.DirectorySeparatorChar;
+        return Environment.GetEnvironmentVariable("ProgramFiles(x86)") + sp;
     }
 
     public static string GetWSLConfigPath()
     {
-        ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT UserName FROM Win32_ComputerSystem");
-        ManagementObjectCollection collection = searcher.Get();
-        string username = (string)collection.Cast<ManagementBaseObject>().First()["UserName"];
+        var searcher = new ManagementObjectSearcher("SELECT UserName FROM Win32_ComputerSystem");
+        var collection = searcher.Get();
+        var username = (string)collection.Cast<ManagementBaseObject>().First()["UserName"];
         username = username.Split("\\")[1];
-        string path = Path.GetPathRoot(Environment.SystemDirectory) 
-                      +"Users"
-                      + Path.DirectorySeparatorChar
-                      + username 
-                      + Path.DirectorySeparatorChar
-                      + WslConfigName;
+        var path = Path.GetPathRoot(Environment.SystemDirectory)
+                   + "Users"
+                   + sp
+                   + username
+                   + sp
+                   + WslConfigName;
         return path;
     }
-    
 }

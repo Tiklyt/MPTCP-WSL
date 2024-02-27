@@ -37,29 +37,5 @@ public class MacAddressUtil
     {
         return macAddress.Replace(":", "-");
     }
-
-    public static string GetMacAddress(string interfaceName)
-    {
-        try
-        {
-            var query = new ObjectQuery("SELECT * FROM Win32_NetworkAdapter " +
-                                        "WHERE (PNPDeviceID LIKE 'PCI%' " +
-                                        "OR PNPDeviceID LIKE 'USB%' or PNPDeviceID LIKE 'PCMCIA%') " +
-                                        "AND NetConnectionID IS NOT NULL");
-            var searcher = new ManagementObjectSearcher(query);
-            foreach (ManagementObject adapter in searcher.Get())
-            {
-                if (adapter["Name"].ToString().Equals(interfaceName))
-                {
-                    return adapter["MacAddress"].ToString();
-                }
-            }
-        }
-        catch (Exception)
-        {
-        }
-
-        return null;
-    }
     
 }

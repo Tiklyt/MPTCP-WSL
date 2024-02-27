@@ -1,5 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace MTCP_WSL2;
 
@@ -58,7 +59,7 @@ public class WslConfigManager
         }
         catch (Exception ex)
         {
-            
+            Log.Error(ex,"Error while updating the kernel path");
         }
     }
 }

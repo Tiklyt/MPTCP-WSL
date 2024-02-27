@@ -21,7 +21,7 @@ public class WslAttacher
     /// <summary>
     ///     Create an instance of WSLAttacher class
     /// </summary>
-    public WslAttacher(ILogger logger,CancellationToken token)
+    public WslAttacher(ILogger logger,NetworkConfig config,CancellationToken token)
     {
         _logger = logger;
         _token = token;
@@ -39,8 +39,7 @@ public class WslAttacher
         if (!Interfaces.Contains(e.NetworkInfo)) Interfaces.Add(e.NetworkInfo);
         if (IsWslProcessRunning())
         {
-            string transMacAddress = MacAddressUtil.Transform(e.NetworkInfo.MacAddress);
-            WSLAttachTool.Attach(e.NetworkInfo.FriendlyInterfaceName,transMacAddress);
+            WSLAttachTool.Attach(e.NetworkInfo.FriendlyInterfaceName,e.NetworkInfo.LinuxMacAddress);
         }
     }
 
@@ -60,6 +59,8 @@ public class WslAttacher
         aTimer.AutoReset = true;
         aTimer.Enabled = true;
     }
+    
+    
 
     private void CheckIfWslStarted()
     {
@@ -71,14 +72,13 @@ public class WslAttacher
             "   AND TargetInstance.Name = '" + "wslhost.exe" + "'";
         var scope = @"\\.\root\CIMV2";
         var watcher = new ManagementEventWatcher(scope, queryString);
-        watcher.EventArrived += async (sender, e) =>
+        watcher.EventArrived += (sender, e) =>
         {
             if (IsWslRunning.Value == false)
             {
-                await Task.Delay(1000);
                 foreach (var iface in Interfaces)
                 {
-                    string transMacAddress = MacAddressUtil.Transform(iface.MacAddress);
+                    string transMacAddress = MacAddressUtil.Transform(iface.WindowsMacAddress);
                     if (!WSLAttachTool.Attach(iface.FriendlyInterfaceName,transMacAddress))
                     {
                         _logger.LogInformation($"Interface {iface.InterfaceName} could not be attached.");
