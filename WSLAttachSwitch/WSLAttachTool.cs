@@ -98,7 +98,7 @@ public class WSLAttachTool
         }
         catch (Exception e)
         {
-            Console.Error.WriteLine(e.Message);
+            Console.Error.WriteLine("WSLAttacher error : " + e.Message);
             return false;
         }
 

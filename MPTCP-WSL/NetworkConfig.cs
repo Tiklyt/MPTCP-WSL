@@ -6,10 +6,10 @@ public class NetworkConfig
     
    
     public List<NetworkInformation> Config { get; set; } = new();
-    public Proxy Proxy { get; set; } = new();
     public bool ManageKernelLocation = true;
     public bool ManageEndpoint = true;
     public bool KeepWSL2Awake = true;
+    public Proxy Proxy { get; set; } = new();
     public int SubflowNr { get; set; } = 2;
     public int AddAddrAcceptedNr { get; set; } = 4;
     public NetworkConfig()
@@ -72,9 +72,9 @@ public class NetworkInformation : IEquatable<NetworkInformation>
 
 public class Proxy
 {
-    private string proxyAddress;
-    private string proxyPort;
-    private string user;
-    private string password;
+    public string proxyAddress= "";
+    public string proxyPort = "";
+    public string user = "";
+    public string password = "";
 }
 
