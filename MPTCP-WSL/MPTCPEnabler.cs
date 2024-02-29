@@ -23,7 +23,6 @@ public class MPTCPEnabler
         _hyperVManager = new HyperVManager(logger);
         _networkMonitor = new NetworkMonitor(logger,token,refreshDelay);
         _wslAttacher = new WslAttacher(logger,_config,token);
-        WSLAwaker wslAwaker = new WSLAwaker(config);
         _networkMonitor.OnUpdate += _config.NetworkMonitorOnOnUpdate;
         _networkMonitor.OnUpdate += async (sender, collectionUpdateEvent) =>
         {
