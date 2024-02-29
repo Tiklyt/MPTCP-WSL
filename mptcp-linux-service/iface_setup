@@ -1,8 +1,23 @@
 #!/bin/sh
 
+
+
+search_powershell() {
+    local powershell_path
+    for drive in /mnt/*; do
+        if [ -d "$drive" ]; then
+            powershell_path="$drive/Windows/System32/WindowsPowerShell/v1.0/powershell.exe"
+            if [ -e "$powershell_path" ]; then
+                echo "$powershell_path"
+            fi
+        fi
+    done
+}
+
 config_flag() {
     local input_mac="$1"
-    user_path=$(sudo -u $(whoami) wslpath "$(/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0/powershell.exe '$env:USERPROFILE')" | tr -cd '[:alnum:]/')/AppData/Local/MPTCP/config.json
+    local powershell_path=$(search_powershell)
+    user_path=$(sudo -u $(whoami) wslpath "$($powershell_path '$env:USERPROFILE')" | tr -cd '[:alnum:]/')/AppData/Local/MPTCP/config.json
     types=$(jq --arg input_mac "$input_mac" '.Config[] | select(.LinuxMacAddress == $input_mac) | .Types | join(" ")' "$user_path")
     flag="$(echo "$types" | tr -cd '[:alnum:] [:space:]')"
     command="ip mptcp endpoint add $DHCP4_IP_ADDRESS dev $DEVICE_IFACE $flag"
@@ -10,12 +25,12 @@ config_flag() {
     $cleaned_command
 }
 
+
 table_id=$(( ${DEVICE_IFACE##*[!0-9]} + 1 ))
 if [ "$NM_DISPATCHER_ACTION" = "down" ]; then
     ip rule del table "$table_id"
     ip route flush table "$table_id"
-else
-    if [ -n "$DHCP4_IP_ADDRESS" ]; then
+elif [ -n "$DHCP4_IP_ADDRESS" ]; then
         existing_rules=$(ip rule show | grep "lookup $table_id")
         if [ -n "$existing_rules" ]; then
             ip rule del table "$table_id"
@@ -33,5 +48,6 @@ else
             done
         fi
 	config_flag "$mac_address"
-    fi
+elif [ "$DEVICE_IFACE" = "eth0" ]; then
+    ip route del default dev "$DEVICE_IFACE"
 fi
