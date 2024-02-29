@@ -1,0 +1,12 @@
+[Unit]
+Description=The Windows MPTCP Enabler Service 
+After=network.target
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+ExecStart=/usr/local/bin/mptcp/mptcp-wsl.sh
+
+[Install]
+WantedBy=multi-user.target

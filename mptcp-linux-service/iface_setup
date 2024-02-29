@@ -1,0 +1,37 @@
+#!/bin/sh
+
+config_flag() {
+    local input_mac="$1"
+    user_path=$(sudo -u $(whoami) wslpath "$(/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0/powershell.exe '$env:USERPROFILE')" | tr -cd '[:alnum:]/')/AppData/Local/MPTCP/config.json
+    types=$(jq --arg input_mac "$input_mac" '.Config[] | select(.LinuxMacAddress == $input_mac) | .Types | join(" ")' "$user_path")
+    flag="$(echo "$types" | tr -cd '[:alnum:] [:space:]')"
+    command="ip mptcp endpoint add $DHCP4_IP_ADDRESS dev $DEVICE_IFACE $flag"
+    cleaned_command=$(echo "$command" | tr -cd '[:alnum:][:space:].')
+    $cleaned_command
+}
+
+table_id=$(( ${DEVICE_IFACE##*[!0-9]} + 1 ))
+if [ "$NM_DISPATCHER_ACTION" = "down" ]; then
+    ip rule del table "$table_id"
+    ip route flush table "$table_id"
+else
+    if [ -n "$DHCP4_IP_ADDRESS" ]; then
+        existing_rules=$(ip rule show | grep "lookup $table_id")
+        if [ -n "$existing_rules" ]; then
+            ip rule del table "$table_id"
+            ip route flush table "$table_id"
+        fi
+        ip_route=$(echo "$IP4_ROUTE_0" | cut -d' ' -f1)
+        ip route add "$ip_route" dev "$DEVICE_IFACE" scope link table "$table_id"
+        ip route add default via "$IP4_GATEWAY" dev "$DEVICE_IFACE" table "$table_id"
+        ip rule add from "$DHCP4_IP_ADDRESS" table "$table_id"
+        mac_address=$(ip link show "$DEVICE_IFACE" | awk '/link\/ether/ {print $2}' | tr '[:lower:]' '[:upper:]' | sed 's/:/-/g')
+       	existing_endpoints=$(ip mptcp endpoint show | grep "dev $DEVICE_IFACE" | awk '{print $3}')
+        if [ -n "$existing_endpoints" ]; then
+            for endpoint in $existing_endpoints; do
+                ip mptcp endpoint delete id "$endpoint"
+            done
+        fi
+	config_flag "$mac_address"
+    fi
+fi
