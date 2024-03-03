@@ -1,0 +1,32 @@
+name: Build WSL2 Linux Kernel with MPTCP enabled
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install necessary packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pahole bc
+          sudo apt-get install -y build-essential flex bison libssl-dev libelf-dev
+      - name: Clone WSL2-Linux-Kernel repository
+        run: git clone https://github.com/microsoft/WSL2-Linux-Kernel
+
+      - name: Build kernel
+        run: |
+          cd WSL2-Linux-Kernel
+          sed -i 's/# CONFIG_MPTCP is not set/CONFIG_MPTCP=y/' Microsoft/config-wsl
+          sed -i 's/# CONFIG_MULTI_PATH_ROUTE is not set/CONFIG_MULTI_PATH_ROUTE=y/' Microsoft/config-wsl
+          echo -e "y\ny\n1\n" | make -j$(nproc) KCONFIG_CONFIG=Microsoft/config-wsl
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: bzImage
+          path: WSL2-Linux-Kernel/arch/x86/boot/bzImage
