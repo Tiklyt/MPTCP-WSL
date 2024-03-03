@@ -13,6 +13,7 @@ sudo apt install iptables -y
 sudo cp mptcp-wsl.service /etc/systemd/system/
 sudo systemctl start mptcp-wsl.service
 sudo systemctl enable mptcp-wsl.service
+sudo sysctl net.ipv4.ip_forward=1
 
 sudo systemctl disable redsocks
 sudo systemctl disable mptcp.service
