@@ -18,6 +18,7 @@ To run properly this application need to have :
 - Windows Subsystem Linux enabled and updated
 - Hyper-V enabled
 - Have an Ubuntu distribution installed.
+- Have [.NET 7.0 Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-7.0.16-windows-x86-installer) installed.
 
 ## Pre-installation setup
 Windows will automatically turn off wifi when Ethernet is plugged in. If you want to try MPTCP over Wifi + Ethernet (or 4G through USB, all the same) you must disable this behavior :
