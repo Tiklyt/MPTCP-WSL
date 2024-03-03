@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics;
-using Serilog;
+using Microsoft.Extensions.Logging;
 
 public class WSLAwaker
 {
@@ -32,7 +32,7 @@ public class WSLAwaker
                 }
                 catch (Exception e)
                 {
-                    logger.Error(e, "Error while starting WSL2 awaker");
+                    _logger.LogError(e,"Error while starting the WSL2 Awaker");
                 }
             });
         }

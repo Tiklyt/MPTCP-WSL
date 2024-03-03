@@ -1,6 +1,3 @@
-using System.Diagnostics;
-using System.Management;
-using System.Security.Principal;
 using MPTCP_WSL;
 
 namespace mptcp_enabler;
@@ -21,7 +18,7 @@ public class Worker : BackgroundService
         NetworkConfig config = NetworkConfig.LoadConfigFromFile();
         WslConfigManager wslConfigManager = new WslConfigManager(config);
         mptcpEnabler = new MPTCPEnabler(_logger, stoppingToken, RefreshDelay, config);
-        awaker = new WSLAwaker(config);
+        awaker = new WSLAwaker(_logger,config);
     }
 
     public override Task StopAsync(CancellationToken cancellationToken)
