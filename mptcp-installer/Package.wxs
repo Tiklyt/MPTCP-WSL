@@ -44,7 +44,7 @@
 
 				<!-- Include the bzImage file in the installation -->
 				<File Id="bzImageFile"
-					  Source="..\mptcp-data\bzImage"
+					  Source="..\mptcp-kernel\bzImage"
 					  KeyPath="no" />
 
 				<!-- Remove all files from the INSTALLFOLDER on uninstall -->
