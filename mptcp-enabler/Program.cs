@@ -24,7 +24,7 @@ public class Program
         }
         catch (Exception ex)
         {
-            Log.Fatal(ex, "an error occured when running the mptcp service");
+            Log.Fatal(ex, "An error occured when running the MPTCP Enabler service");
         }
         finally
         {

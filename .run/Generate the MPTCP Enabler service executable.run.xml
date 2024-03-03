@@ -1,0 +1,6 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Generate the MPTCP Enabler service executable" type="DotNetFolderPublish" factoryName="Publish to folder">
+    <riderPublish configuration="Release" delete_existing_files="true" platform="Any CPU" produce_single_file="true" ready_to_run="true" runtime="win-x64" target_folder="$PROJECT_DIR$/mptcp-enabler/bin/Release/net7.0/win-x64/publish" target_framework="net7.0" uuid_high="-4135486601753835454" uuid_low="-8974698236041620773" />
+    <method v="2" />
+  </configuration>
+</component>
