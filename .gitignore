@@ -30,3 +30,5 @@ MPTCP-WSL/obj/
 MPTCP-WSL2.sln.DotSettings.user
 
 mptcp-linux-service/test.sh
+
+mptcp-installer/bin/
