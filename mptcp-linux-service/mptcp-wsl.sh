@@ -8,8 +8,30 @@ cleanup(){
     kill "$microsocks1_PID"
     kill "$microsocks2_PID"
 }
+
+search_powershell() {
+    local powershell_path
+    for drive in /mnt/*; do
+        if [ -d "$drive" ]; then
+            powershell_path="$drive/Windows/System32/WindowsPowerShell/v1.0/powershell.exe"
+            if [ -e "$powershell_path" ]; then
+                echo "$powershell_path"
+            fi
+        fi
+    done
+}
+
+config_limits(){
+      local powershell_path=$(search_powershell)
+      user_path=$(sudo -u $(whoami) wslpath "$($powershell_path '$env:USERPROFILE')" | tr -cd '[:alnum:]/')/AppData/Local/MPTCP/config.json
+      SubflowNr=$(jq ".SubflowNr" "$user_path")
+      AddAddrAcceptedNr=$(jq ".AddAddrAcceptedNr" "$user_path")
+      sudo ip mptcp limits set subflow "$SubflowNr"
+      sudo ip mptcp limits set add_addr_accepted "$AddAddrAcceptedNr"
+}
 config_proxy() {
-    user_path=$(sudo -u $(whoami) wslpath "$(/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0/powershell.exe '$env:USERPROFILE')" | tr -cd '[:alnum:]/')/AppData/Local/MPTCP/config.json
+    local powershell_path=$(search_powershell)
+    user_path=$(sudo -u $(whoami) wslpath "$($powershell_path '$env:USERPROFILE')" | tr -cd '[:alnum:]/')/AppData/Local/MPTCP/config.json    
     local proxy_address=$(jq -r '.Proxy.proxyAddress' "$user_path")
     local proxy_port=$(jq -r '.Proxy.proxyPort' "$user_path")
     local user=$(jq -r '.Proxy.user' "$user_path")
@@ -49,6 +71,7 @@ config_iptable(){
 stop_proxy
 delete_iptable
 
+config_limits
 config_iptable
 config_proxy
 redsocks -c /etc/mptcp-redsocks.conf &
