@@ -1,6 +1,4 @@
-﻿using System.Management;
-
-namespace MPTCP_WSL;
+﻿namespace MPTCP_WSL;
 
 public class FileManager
 {
@@ -9,80 +7,64 @@ public class FileManager
     private const string ConfigFileName = "config.json";
     private const string LogFileName = "log.txt";
     private const string WslConfigName = ".wslconfig";
-    private const string KernelName = "bzImage";
-    private const string sp = "/";
+    private const string KernelName = "BzImage";
+    private const string InstalledOnFileName = "installedOn";
+    private static readonly string? UserPath = GetUsersPath();
+
+
+    private static string? GetUsersPath()
+    {
+        var programFilesPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+        var filePath = Path.Combine(programFilesPath, AppName, InstalledOnFileName);
+        try
+        {
+            var lines = File.ReadAllLines(filePath);
+            if (lines.Length >= 2) return lines[1].Split("\\")[1];
+            return null;
+        }
+        catch (Exception)
+        {
+            return null;
+        }
+    }
 
     public static string GetConfigPath()
     {
-        var searcher = new ManagementObjectSearcher("SELECT UserName FROM Win32_ComputerSystem");
-        var collection = searcher.Get();
-        var username = (string)collection.Cast<ManagementBaseObject>().First()["UserName"];
-        username = username.Split("\\")[1];
-        var path = Path.GetPathRoot(Environment.SystemDirectory)
-                   + "Users"
-                   + sp
-                   + username
-                   + sp
-                   + "AppData"
-                   + sp
-                   + "Local"
-                   + sp
-                   + AppName
-                   + sp
-                   + ConfigFileName;
-        return path;
+        if (UserPath == null)
+        {
+            return null;
+        }
+        return Path.Combine(Path.GetPathRoot(Environment.SystemDirectory), "Users", UserPath, "AppData", "Local",
+            AppName, ConfigFileName);
     }
 
-    public static string GetLogPath()
+    public static string? GetLogPath()
     {
-        var searcher = new ManagementObjectSearcher("SELECT UserName FROM Win32_ComputerSystem");
-        var collection = searcher.Get();
-        var username = (string)collection.Cast<ManagementBaseObject>().First()["UserName"];
-        username = username.Split("\\")[1];
-        var path = Path.GetPathRoot(Environment.SystemDirectory)
-                   + "Users"
-                   + sp
-                   + username
-                   + sp
-                   + "AppData"
-                   + sp
-                   + "Local"
-                   + sp
-                   + AppName
-                   + sp
-                   + LogFileName;
-        return path;
+        if (UserPath == null)
+        {
+            return null;
+        }
+    return Path.Combine(Path.GetPathRoot(Environment.SystemDirectory), "Users", UserPath, "AppData", "Local",
+            AppName, LogFileName);
     }
 
     public static string GetKernelPath()
     {
-        var localPath = GetApplicationFolderPath();
-        return localPath
-               + AppName
-               + sp
-               + AppContext
-               + sp
-               + KernelName;
+        return Path.Combine(GetApplicationFolderPath(), AppName, AppContext, KernelName);
     }
 
 
-    public static string GetApplicationFolderPath()
+    private static string GetApplicationFolderPath()
     {
-        return Environment.GetEnvironmentVariable("ProgramFiles(x86)") + sp;
+        return Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
     }
 
     public static string GetWSLConfigPath()
     {
-        var searcher = new ManagementObjectSearcher("SELECT UserName FROM Win32_ComputerSystem");
-        var collection = searcher.Get();
-        var username = (string)collection.Cast<ManagementBaseObject>().First()["UserName"];
-        username = username.Split("\\")[1];
-        var path = Path.GetPathRoot(Environment.SystemDirectory)
-                   + "Users"
-                   + sp
-                   + username
-                   + sp
-                   + WslConfigName;
-        return path;
+        if (UserPath == null)
+        {
+            return null;
+        }
+        return Path.Combine(Path.GetPathRoot(Environment.SystemDirectory), "Users", UserPath, WslConfigName);
     }
 }

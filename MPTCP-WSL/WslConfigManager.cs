@@ -1,5 +1,4 @@
 ﻿using System.Text.RegularExpressions;
-using Microsoft.Extensions.Logging;
 using Serilog;
 
 namespace MPTCP_WSL;
@@ -7,38 +6,40 @@ namespace MPTCP_WSL;
 public class WslConfigManager
 {
     private readonly NetworkConfig _config;
+    private readonly string wslConfigPath;
 
     public WslConfigManager(NetworkConfig config)
     {
-            _config = config;
-            if (!config.ManageKernelLocation) return;
-            string kernelPath = FileManager.GetKernelPath().Replace(@"\", @"\\");
-            if (File.Exists(FileManager.GetWSLConfigPath()))
-            {
-                if (!IsKernelPathCorrect(kernelPath))
-                {
-                    UpdateKernelPath(kernelPath);
-                }
-            }
-            else
-            {
-                File.WriteAllLines(FileManager.GetWSLConfigPath(),new []{"[wsl2]","kernel="+kernelPath});
-            }
+        _config = config;
+        if (!config.ManageKernelLocation) return;
+        wslConfigPath = FileManager.GetWSLConfigPath();
+        if (wslConfigPath == null) return;
+        var kernelPath = FileManager.GetKernelPath().Replace(@"\", @"\\");
+
+        if (File.Exists(wslConfigPath))
+        {
+            if (!IsKernelPathCorrect(kernelPath)) UpdateKernelPath(kernelPath);
+        }
+        else
+        {
+            File.WriteAllLines(wslConfigPath, new[] { "[wsl2]", "kernel=" + kernelPath });
+        }
     }
-    
-    
-    public static bool IsKernelPathCorrect(string expectedKernelPath)
+
+
+    private bool IsKernelPathCorrect(string expectedKernelPath)
     {
         try
         {
-            string configFileContent = File.ReadAllText(FileManager.GetWSLConfigPath());
-            Match match = Regex.Match(configFileContent, @"kernel\s*=\s*(.*)", RegexOptions.IgnoreCase);
+            var configFileContent = File.ReadAllText(wslConfigPath);
+            var match = Regex.Match(configFileContent, @"kernel\s*=\s*(.*)", RegexOptions.IgnoreCase);
 
             if (match.Success)
             {
-                string actualKernelPath = match.Groups[1].Value.Trim();
+                var actualKernelPath = match.Groups[1].Value.Trim();
                 return string.Equals(actualKernelPath, expectedKernelPath, StringComparison.OrdinalIgnoreCase);
             }
+
             return false;
         }
         catch (Exception ex)
@@ -47,19 +48,21 @@ public class WslConfigManager
         }
     }
 
-    public static void UpdateKernelPath(string newKernelPath)
+    private void UpdateKernelPath(string newKernelPath)
     {
         try
         {
-            string configFileContent = File.ReadAllText(FileManager.GetWSLConfigPath());
-            
-            configFileContent = Regex.Replace(configFileContent, @"kernel\s*=\s*(.*)", $"kernel = {newKernelPath}");
-            
-            File.WriteAllText(FileManager.GetWSLConfigPath(), configFileContent);
+            var configFileContent = File.ReadAllText(wslConfigPath);
+            if (Regex.IsMatch(configFileContent, @"^kernel\s*=\s*.*$", RegexOptions.Multiline))
+                configFileContent = Regex.Replace(configFileContent, @"^kernel\s*=\s*.*$", $"kernel = {newKernelPath}",
+                    RegexOptions.Multiline);
+            else
+                configFileContent += $"kernel = {newKernelPath}\n";
+            File.WriteAllText(wslConfigPath, configFileContent);
         }
         catch (Exception ex)
         {
-            Log.Error(ex,"Error while updating the kernel path");
+            Log.Error(ex, "Error while updating the kernel path");
         }
     }
 }

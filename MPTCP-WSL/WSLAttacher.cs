@@ -15,13 +15,13 @@ public class WslAttacher
 {
     private static readonly SafeBool IsWslRunning = new();
     private static readonly ConcurrentBag<NetworkInformation> Interfaces = new();
-    private readonly CancellationToken _token;
     private readonly ILogger _logger;
+    private readonly CancellationToken _token;
 
     /// <summary>
     ///     Create an instance of WSLAttacher class
     /// </summary>
-    public WslAttacher(ILogger logger,NetworkConfig config,CancellationToken token)
+    public WslAttacher(ILogger logger, NetworkConfig config, CancellationToken token)
     {
         _logger = logger;
         _token = token;
@@ -38,9 +38,7 @@ public class WslAttacher
     {
         if (!Interfaces.Contains(e.NetworkInfo)) Interfaces.Add(e.NetworkInfo);
         if (IsWslProcessRunning())
-        {
-            WSLAttachTool.Attach(e.NetworkInfo.FriendlyInterfaceName,e.NetworkInfo.LinuxMacAddress);
-        }
+            WSLAttachTool.Attach(e.NetworkInfo.FriendlyInterfaceName, e.NetworkInfo.LinuxMacAddress);
     }
 
     /**
@@ -51,16 +49,12 @@ public class WslAttacher
         var aTimer = new Timer(10000);
         aTimer.Elapsed += (sender, args) =>
         {
-            if (!_token.IsCancellationRequested)
-            {
-                FlushMemory();
-            }
+            if (!_token.IsCancellationRequested) FlushMemory();
         };
         aTimer.AutoReset = true;
         aTimer.Enabled = true;
     }
-    
-    
+
 
     private void CheckIfWslStarted()
     {
@@ -78,18 +72,16 @@ public class WslAttacher
             {
                 foreach (var iface in Interfaces)
                 {
-                    string transMacAddress = MacAddressUtil.Transform(iface.WindowsMacAddress);
-                    if (!WSLAttachTool.Attach(iface.FriendlyInterfaceName,transMacAddress))
-                    {
+                    var transMacAddress = MacAddressUtil.Transform(iface.WindowsMacAddress);
+                    if (!WSLAttachTool.Attach(iface.FriendlyInterfaceName, transMacAddress))
                         _logger.LogInformation($"Interface {iface.InterfaceName} could not be attached.");
-                    }
                     else
-                    {
                         _logger.LogInformation($"Interface {iface.InterfaceName} attached successfully.");
-                    }
                 }
+
                 IsWslRunning.Value = true;
             }
+
             e.NewEvent.Dispose();
         };
         watcher.Start();
@@ -117,7 +109,7 @@ public class WslAttacher
         };
         watcher.Start();
     }
-    
+
     /// <summary>
     ///     check if WSL is running
     /// </summary>

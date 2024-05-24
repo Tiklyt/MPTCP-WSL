@@ -1,5 +1,4 @@
 ﻿using System.Globalization;
-using System.Management;
 
 public class MacAddressUtil
 {
@@ -7,20 +6,12 @@ public class MacAddressUtil
 
     public static string Transform(string originalMac)
     {
-        byte[] originalBytes = ParseMacAddress(originalMac);
-        byte[] transformedBytes = new byte[originalBytes.Length];
+        var originalBytes = ParseMacAddress(originalMac);
+        var transformedBytes = new byte[originalBytes.Length];
 
-        for (int i = 0; i < originalBytes.Length; i++)
-        {
-            transformedBytes[i] = (byte)(originalBytes[i] ^ key[i]);
-        }
+        for (var i = 0; i < originalBytes.Length; i++) transformedBytes[i] = (byte)(originalBytes[i] ^ key[i]);
 
         return FormatMacAddress(transformedBytes);
-    }
-
-    public static string Revert(string transformedMac)
-    {
-        return Transform(transformedMac);
     }
 
     private static byte[] ParseMacAddress(string macAddress)
@@ -33,9 +24,8 @@ public class MacAddressUtil
         return BitConverter.ToString(bytes).Replace(":", "-");
     }
 
-    public static string formatMacAddress(string macAddress)
+    public static string FormatMacAddress(string macAddress)
     {
         return macAddress.Replace(":", "-");
     }
-    
 }

@@ -16,6 +16,7 @@
         <DebuggerSupport Condition="'$(Configuration)'=='Release'">false</DebuggerSupport>
         <EnableUnsafeBinaryFormatterSerialization>false</EnableUnsafeBinaryFormatterSerialization>
         <EnableUnsafeUTF7Encoding>false</EnableUnsafeUTF7Encoding>
+        <SelfContained>true</SelfContained>
         <HttpActivityPropagationSupport>false</HttpActivityPropagationSupport>
         <InvariantGlobalization>true</InvariantGlobalization>
     </PropertyGroup>
@@ -25,6 +26,7 @@
         <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="7.0.1" />
         <PackageReference Include="Serilog" Version="3.0.1" />
         <PackageReference Include="Serilog.Extensions.Hosting" Version="7.0.0" />
+        <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
         <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
         <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1"/>
     </ItemGroup>

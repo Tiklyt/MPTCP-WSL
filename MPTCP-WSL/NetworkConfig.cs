@@ -3,20 +3,20 @@ using Newtonsoft.Json;
 
 public class NetworkConfig
 {
-    
-   
-    public List<NetworkInformation> Config { get; set; } = new();
-    public bool ManageKernelLocation = true;
     public bool ManageEndpoint = true;
-    public bool KeepWSL2Awake = true;
-    public Proxy Proxy { get; set; } = new();
-    public int SubflowNr { get; set; } = 2;
-    public int AddAddrAcceptedNr { get; set; } = 4;
+    public bool ManageKernelLocation = true;
+
     public NetworkConfig()
     {
         Config = new List<NetworkInformation>();
     }
-    
+
+
+    public List<NetworkInformation> Config { get; set; } = new();
+    public Proxy Proxy { get; set; } = new();
+    public int SubflowNr { get; set; } = 2;
+    public int AddAddrAcceptedNr { get; set; } = 4;
+
     public void NetworkMonitorOnOnUpdate(object? sender, CollectionUpdateEvent e)
     {
         if (!Config.Contains(e.NetworkInfo))
@@ -25,29 +25,30 @@ public class NetworkConfig
             SaveConfigToFile();
         }
     }
-    
+
 
     public void SaveConfigToFile()
     {
-        string json = JsonConvert.SerializeObject(this, Formatting.Indented);
-        File.WriteAllText(FileManager.GetConfigPath(), json);
+        var cfgPath = FileManager.GetConfigPath();
+        if (cfgPath == null) return;
+        var json = JsonConvert.SerializeObject(this, Formatting.Indented);
+        File.WriteAllText(cfgPath, json);
     }
 
     public static NetworkConfig LoadConfigFromFile()
     {
         try
         {
-            if (File.Exists(FileManager.GetConfigPath()))
+            var cfgPath = FileManager.GetConfigPath();
+            if (File.Exists(cfgPath))
             {
-                string json = File.ReadAllText(FileManager.GetConfigPath());
+                var json = File.ReadAllText(cfgPath);
                 var config = JsonConvert.DeserializeObject<NetworkConfig>(json);
                 if (config == null) return new NetworkConfig();
-                else return config;
+                return config;
             }
-            else
-            { 
-                return new NetworkConfig();
-            }
+
+            return new NetworkConfig();
         }
         catch (Exception ex)
         {
@@ -62,7 +63,7 @@ public class NetworkInformation : IEquatable<NetworkInformation>
     public string FriendlyInterfaceName { get; set; }
     public string WindowsMacAddress { get; set; }
     public string LinuxMacAddress { get; set; }
-    public List<string> Types { get; set; } = new ();
+    public List<string> Types { get; set; } = new();
 
     public bool Equals(NetworkInformation? other)
     {
@@ -72,9 +73,8 @@ public class NetworkInformation : IEquatable<NetworkInformation>
 
 public class Proxy
 {
-    public string proxyAddress= "";
+    public string password = "";
+    public string proxyAddress = "";
     public string proxyPort = "";
     public string user = "";
-    public string password = "";
 }
-
