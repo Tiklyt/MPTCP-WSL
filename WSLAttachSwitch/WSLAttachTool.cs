@@ -29,15 +29,18 @@ public class WSLAttachTool
         return new Guid(guidbytes);
     }
 
-    public static bool Attach(string networkName, string macAddress = null, int? vlanIsolationId = null)
+    public static (bool,string) Attach(string networkName, string macAddress = null, int? vlanIsolationId = null)
     {
         try
         {       
             var systems = ComputeSystem.Enumerate(new JsonObject { ["Owners"] = new JsonArray("WSL") });
-            if (systems.Length != 1)
+            if (systems.Length > 1)
             {
-                Console.Error.WriteLine("Can't find unique WSL VM. Is WSL2 running?");
-                return false;
+                return (false, "Can't find unique WSL VM. Please run only one VM at a time.");
+            }
+            else if (systems.Length == 0)
+            {
+                return (false,"No WSL2 instance appear to be running. attach failed.");
             }
 
             var systemid = systems[0].GetProperty("Id").GetString();
@@ -64,13 +67,11 @@ public class WSLAttachTool
                 if (!epprops.TryGetProperty("VirtualMachine", out var vmJsonElement) ||
                     vmJsonElement.GetString() != systemid)
                 {
-                    // endpoint not attached to current WSL2 VM, recreate it
                     ComputeNetworkEndpoint.Delete(epid);
                 }
                 else
                 {
-                    Console.WriteLine($"{networkName} : Endpoint already attached to current WSL2 VM.");
-                    return true;
+                    return (true,"");
                 }
             }
 
@@ -99,9 +100,9 @@ public class WSLAttachTool
         catch (Exception e)
         {
             Console.Error.WriteLine("WSLAttacher error : " + e.Message);
-            return false;
+            return (false, "error : " + e.Message);
         }
 
-        return true;
+        return (true,"");
     }
 }

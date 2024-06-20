@@ -73,8 +73,9 @@ public class WslAttacher
                 foreach (var iface in Interfaces)
                 {
                     var transMacAddress = MacAddressUtil.Transform(iface.WindowsMacAddress);
-                    if (!WSLAttachTool.Attach(iface.FriendlyInterfaceName, transMacAddress))
-                        _logger.LogInformation($"Interface {iface.InterfaceName} could not be attached.");
+                    var result = WSLAttachTool.Attach(iface.FriendlyInterfaceName, transMacAddress);
+                    if (!result.Item1)
+                        _logger.LogInformation($"Interface {iface.InterfaceName} could not be attached. \n reason : {result.Item2}");
                     else
                         _logger.LogInformation($"Interface {iface.InterfaceName} attached successfully.");
                 }

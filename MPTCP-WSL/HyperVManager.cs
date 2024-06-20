@@ -65,12 +65,13 @@ public class HyperVManager
                     }
                     else
                     {
-                        _logger.LogInformation($"Unable to create the vSwitch : {id}");
+                        _logger.LogInformation($"Unable to create the vSwitch : {id} reason : " +
+                                               $"{RunPowerShell(command).Output}");
                     }
                 }
                 else
                 {
-                    _logger.LogInformation($"vSwitch : {id} already existing");
+                    _logger.LogInformation($"the vSwitch {id} : already exists");
                     netInfo.FriendlyInterfaceName = vSwitchPrefix + netInfo.FriendlyInterfaceName;
                     OnAdd.Invoke(this, new CollectionUpdateEvent
                     {
