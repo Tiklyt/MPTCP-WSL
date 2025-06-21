@@ -31,7 +31,7 @@ Windows will automatically turn off wifi when Ethernet is plugged in. If you wan
 
 ### Step 1
 Download the installer provider on the release sections of this repo and to run it as administator. it will install the MPTCP Enabler service that will be in charge of attaching all Network Interfaces into WSL2. At the end of the installation. u will able to see that the MPTCP Enabler Service is running.  
-![MPTCP Service](https://i.ibb.co/JFnKSyY/Capture-d-cran-2024-03-03-161257.png)
+
 ### Step 2
 Configure the service to be runned as a Windows user and not Local System. here's a [website](https://docs.microfocus.com/SM/9.61/Hybrid/Content/serversetup/tasks/configure_the_service_manager_service_to_run_as_a_windows_user.htm) that show how to do it.
 ### Step 3
